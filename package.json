@@ -26,13 +26,16 @@
 		"commander": "^2.19.0",
 		"ethereumjs-util": "^6.2.0",
 		"ethereumjs-wallet": "^0.6.3",
+		"ethers": "^5.4.7",
 		"flex-contract": "^1.10.2",
 		"flex-ether": "^1.6.3",
-		"lodash": "^4.17.15",
+		"lodash": "^4.17.21",
 		"mz": "^2.7.0",
-		"prompt": "^1.0.0"
+		"prompt": "^1.0.0",
+		"web3": "^1.6.0"
 	},
 	"devDependencies": {
+		"dotenv": "^10.0.0",
 		"ganache-cli": "^6.2.5",
 		"mocha": "^5.2.0"
 	},
