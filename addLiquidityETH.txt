@@ -1,0 +1,71 @@
+Tango Router            0xFCE3E4daDfA42104e5Fac61349D510ddDecCFE95
+Tango Factory           0xfAfFa2d8e0998b71B4270859E09FFf4f0be9B6Dc
+Tango Dev               0xB79E7e395Ed0406e279cEb3838cD3c7db1D7CbfF
+Tango BCH-EBEN pair     0x5B8D7645E354A971D6B07090aCdFDF335974C264
+
+
+Mist Router             0x5d0bF8d8c8b054080E2131D8b260a5c6959411B8
+Mist Factory       
+Mist Dev                ?
+Mist DireccionX         0x8370DAE31693A8BbB9630b7052de52aCBcEC7525           (Es el dev? Es el deployer?)
+Mist BCH-EBEN pair      0x80F712670d268cf2C05e7162674c7466c940eBE3
+Mist BCH      
+Mist EBEN               0x77CB87b57F54667978Eb1B199b28a0db8C8E1c0B
+
+
+Tango Router     0xFCE3E4daDfA42104e5Fac61349D510ddDecCFE95
+    addLiquidityETH
+    Date                        ?
+    From                        0xB79E7e395Ed0406e279cEb3838cD3c7db1D7CbfF
+    To                          0xFCE3E4daDfA42104e5Fac61349D510ddDecCFE95
+    Value                       ?
+    Gas Price                   0.00000000105 BCH (0.1050 sats / 1.05 gwei)
+    Gas Limit                   2,815,124
+    Gas Used by Transaction     2,302,489 (81.79%)
+
+    token                       0x77CB87b57F54667978Eb1B199b28a0db8C8E1c0B          EBEN
+    amountTokenDesired          ?
+    amountTokenMin              ?
+    amountETHMin                ?
+    to                          0xB79E7e395Ed0406e279cEb3838cD3c7db1D7CbfF
+    deadline                    ?
+
+Tango
+0xf305d719
+[0]: 00000000000000000000000077cb87b57f54667978eb1b199b28a0db8c8e1c0b
+[1]: 0000000000000000000000000000000000000000000000000b4ab8ea7fd02000           813666000000000000
+[2]: 0000000000000000000000000000000000000000000000000b4ab8ea7fd02000           813666000000000000
+[3]: 00000000000000000000000000000000000000000000000000038d7ea4c68000             1000000000000000
+[4]: 000000000000000000000000b79e7e395ed0406e279ceb3838cd3c7db1d7cbff
+[5]: 0000000000000000000000000000000000000000000000000000000061898e7e    
+
+
+-------------------------------------------------------------------------------------------------------------------------
+
+Mist Router     0x5d0bF8d8c8b054080E2131D8b260a5c6959411B8
+    addLiquidityETH
+    Date                        Sunday, October 3, 2021 at 2:07:54 AM GMT-03:00
+    From                        0x8370DAE31693A8BbB9630b7052de52aCBcEC7525
+    To                          0x5d0bF8d8c8b054080E2131D8b260a5c6959411B8
+    Value                       0.00826376 BCH
+    Gas Price                   0.00000000105 BCH (0.1050 sats / 1.05 gwei)
+    Gas Limit                   2,815,124
+    Gas Used by Transaction     2,302,489 (81.79%)
+
+    token                       0x77CB87b57F54667978Eb1B199b28a0db8C8E1c0B          EBEN
+    amountTokenDesired          5000000000000000000
+    amountTokenMin              5000000000000000000
+    amountETHMin                8263760000000000
+    to                          0x8370DAE31693A8BbB9630b7052de52aCBcEC7525
+    deadline                    1633239441    
+
+
+
+Mist
+0xf305d719
+[0]: 00000000000000000000000077cb87b57f54667978eb1b199b28a0db8c8e1c0b
+[1]: 0000000000000000000000000000000000000000000000004563918244f40000           5000000000000000000
+[2]: 0000000000000000000000000000000000000000000000004563918244f40000           5000000000000000000
+[3]: 000000000000000000000000000000000000000000000000001d5bd88f4f2000              8263760000000000
+[4]: 0000000000000000000000008370dae31693a8bbb9630b7052de52acbcec7525
+[5]: 0000000000000000000000000000000000000000000000000000000061594191

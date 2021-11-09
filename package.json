@@ -20,6 +20,7 @@
 		"send-tokens": "./src/send-tokens.js"
 	},
 	"dependencies": {
+		"@uniswap/v2-core": "^1.0.1",
 		"bignumber.js": "^9.0.0",
 		"bip39": "^3.0.2",
 		"colors": "^1.3.3",
