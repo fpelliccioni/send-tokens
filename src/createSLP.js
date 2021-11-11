@@ -13,7 +13,9 @@ function toWei(amount, decimals) {
 	return new BigNumber(amount).times(`1e${decimals}`).integerValue().toString(10);
 }
 
-let _web3 = new Web3(`https://smartbch.fountainhead.cash/mainnet`);
+// let _web3 = new Web3(`https://smartbch.fountainhead.cash/mainnet`);
+// let _web3 = new Web3(`https://35.220.203.194:9545`);
+let _web3 = new Web3(`http://35.220.203.194:8545`);
 
 function getDeadline(plusMinutes = 20) {
 	// var newDateObj = new Date(oldDateObj.getTime() + diff*60000);
@@ -27,12 +29,24 @@ function getDeadline(plusMinutes = 20) {
 	return '0x' + secondsSinceEpoch.toString(16);
 }
 
+async function getGasPrice(web3) {
+	let currentGasPrice = await web3.eth.getGasPrice();
+	// console.log("currentGasPrice == 0: ", currentGasPrice == 0);
+	if (currentGasPrice == 0) {
+		currentGasPrice = 1050000000;
+	}
+	const gasPrice = ethers.utils.hexlify(parseInt(currentGasPrice));
+	// console.log(currentGasPrice);
+	// console.log(gasPrice);
+	return gasPrice;
+}
+
+
 // Amount to approve: 115792089237316195423570985008687907853269984665640564039457584007913129639935
 //   			      0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff (64 digits)
 // value = '115792089237316195423570985008687907853269984665640564039457584007913129639935';
 async function approve(web3, privateKey, contract, tokenAddr, spender, value) {
-	const currentGasPrice = await web3.eth.getGasPrice();
-	const gasPrice = ethers.utils.hexlify(parseInt(currentGasPrice));
+	const gasPrice = getGasPrice(web3);
 	const gasNeeded = 59418;		//hardcoded
 
 	const tx = {
@@ -54,8 +68,7 @@ async function addLiquidityETH(web3,
 {
 	const routerContract = new web3.eth.Contract(ROUTER_ABI, routerAddr);
 	const accountObj = await _web3.eth.accounts.privateKeyToAccount(privateKey);
-	const currentGasPrice = await web3.eth.getGasPrice();
-	const gasPrice = ethers.utils.hexlify(parseInt(currentGasPrice));
+	const gasPrice = getGasPrice(web3);
 	const gasNeeded = 2815124; //hardcoded
 
 	const tx = {
@@ -117,12 +130,13 @@ async function getOrCreatePair(web3, privateKey, factoryContract, tokenA, tokenB
 }
 
 async function createPair(web3, privateKey, factoryContract, tokenA, tokenB) {
-	const currentGasPrice = await web3.eth.getGasPrice();
-	const gasPrice = ethers.utils.hexlify(parseInt(currentGasPrice));
-	const gasNeeded = await factoryContract.methods.createPair(tokenA, tokenB).estimateGas({gasPrice: gasPrice});
+	const gasPrice = getGasPrice(web3);
+	// const gasNeeded = await factoryContract.methods.createPair(tokenA, tokenB).estimateGas({gasPrice: gasPrice});
+	const gasNeeded = 85251;		//hardcoded
 
 	const tx = {
 		// from: sender,
+		value: 0,
 		to: factoryContract.options.address,
 		gasLimit: gasNeeded,
 		gasPrice: gasPrice,
@@ -139,16 +153,15 @@ async function createPair(web3, privateKey, factoryContract, tokenA, tokenB) {
 	// console.log("res: ", res);
 }
 
-
 async function transfer(web3, privateKey, tokenContract, to, value) {
 	console.log("transfer() 1");
-	const currentGasPrice = await web3.eth.getGasPrice();
-	const gasPrice = ethers.utils.hexlify(parseInt(currentGasPrice));
+	const gasPrice = getGasPrice(web3);
 
 	console.log("transfer() to:    ", to);
 	console.log("transfer() value: ", value);
 
-	const gasNeeded = await tokenContract.methods.transfer(to, value).estimateGas({gasPrice: gasPrice});
+	// const gasNeeded = await tokenContract.methods.transfer(to, value).estimateGas({gasPrice: gasPrice});
+	const gasNeeded = 585251;		//hardcoded
 
 	console.log("transfer() 2");
 	const tx = {
@@ -180,6 +193,7 @@ async function transfer(web3, privateKey, tokenContract, to, value) {
 
 // 	await thisObject[name].mint(thisObject.alice.address)
 //   }
+
 async function createSLP(web3, privateKey, factoryAddr, tokenA, tokenB, amount) {
 	const factoryContract = new web3.eth.Contract(FACTORY_ABI, factoryAddr);
 
@@ -209,23 +223,23 @@ async function createSLP(web3, privateKey, factoryAddr, tokenA, tokenB, amount) 
 
 }
 
-
 _web3.eth.net.getId().then(async function(netId) {
 	// const privateKey = process.env.DEV_PRIVATE_KEY
 	const privateKey = process.env.DEPLOYER_PRIVATE_KEY
 	const routerAddr = process.env.ROUTER_ADDRESS;
 	const factoryAddr = process.env.FACTORY_ADDRESS;
+
 	const tokenA = '0x3743eC0673453E5009310C727Ba4eaF7b3a1cc04';
-	const tokenB = '0x77CB87b57F54667978Eb1B199b28a0db8C8E1c0B';
+	// const tokenB = '0x77CB87b57F54667978Eb1B199b28a0db8C8E1c0B';			// EBEN (mainnet)
+	const tokenB = '0x19a2685c097cB28F50c0E322D23Be415d066aCC6';			// TTK
+
 	const amountTokenDesired = '813666000000000000';
 	const amountTokenMin = '813666000000000000';
 	const amountETHMin = '1000000000000000';
 	// const deadline = '0x61898e7e';
 	const deadline = getDeadline();
-	const amount = 10;
-
-
-
+	// const amount = 10;
+	const amount = 1000000000000000;
 
 	console.log("factoryAddr:                    ", factoryAddr);
 	console.log('routerAddr:                     ', routerAddr);
