@@ -141,10 +141,16 @@ async function createPair(web3, privateKey, factoryContract, tokenA, tokenB) {
 
 
 async function transfer(web3, privateKey, tokenContract, to, value) {
+	console.log("transfer() 1");
 	const currentGasPrice = await web3.eth.getGasPrice();
 	const gasPrice = ethers.utils.hexlify(parseInt(currentGasPrice));
+
+	console.log("transfer() to:    ", to);
+	console.log("transfer() value: ", value);
+
 	const gasNeeded = await tokenContract.methods.transfer(to, value).estimateGas({gasPrice: gasPrice});
 
+	console.log("transfer() 2");
 	const tx = {
 		// from: sender,
 		to: tokenContract.options.address,
