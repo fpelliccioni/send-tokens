@@ -13,11 +13,11 @@ function toWei(amount, decimals) {
 	return new BigNumber(amount).times(`1e${decimals}`).integerValue().toString(10);
 }
 
-// let _web3 = new Web3(`https://smartbch.fountainhead.cash/mainnet`);
+let _web3 = new Web3(`https://smartbch.fountainhead.cash/mainnet`);
 // let _web3 = new Web3(`https://35.220.203.194:9545`);
-let _web3 = new Web3(`http://35.220.203.194:8545`);
+// let _web3 = new Web3(`http://35.220.203.194:8545`);
 
-function getDeadline(plusMinutes = 20) {
+function getDeadline(plusMinutes = 2) {
 	// var newDateObj = new Date(oldDateObj.getTime() + diff*60000);
 	const now = new Date()
 	const secondsSinceEpoch = Math.round((now.getTime() + plusMinutes * 60000) / 1000);
@@ -31,13 +31,13 @@ function getDeadline(plusMinutes = 20) {
 
 async function getGasPrice(web3) {
 	let currentGasPrice = await web3.eth.getGasPrice();
-	// console.log("currentGasPrice == 0: ", currentGasPrice == 0);
+	console.log("currentGasPrice == 0: ", currentGasPrice == 0);
 	if (currentGasPrice == 0) {
 		currentGasPrice = 1050000000;
 	}
 	const gasPrice = ethers.utils.hexlify(parseInt(currentGasPrice));
-	// console.log(currentGasPrice);
-	// console.log(gasPrice);
+	console.log(currentGasPrice);
+	console.log(gasPrice);
 	return gasPrice;
 }
 
@@ -46,7 +46,7 @@ async function getGasPrice(web3) {
 //   			      0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff (64 digits)
 // value = '115792089237316195423570985008687907853269984665640564039457584007913129639935';
 async function approve(web3, privateKey, contract, tokenAddr, spender, value) {
-	const gasPrice = getGasPrice(web3);
+	const gasPrice = await getGasPrice(web3);
 	const gasNeeded = 59418;		//hardcoded
 
 	const tx = {
@@ -68,7 +68,7 @@ async function addLiquidityETH(web3,
 {
 	const routerContract = new web3.eth.Contract(ROUTER_ABI, routerAddr);
 	const accountObj = await _web3.eth.accounts.privateKeyToAccount(privateKey);
-	const gasPrice = getGasPrice(web3);
+	const gasPrice = await getGasPrice(web3);
 	const gasNeeded = 2815124; //hardcoded
 
 	const tx = {
@@ -103,26 +103,9 @@ async function approveAndAddLiquidityETH(web3,
 		tokenAddr, amountTokenDesired, amountTokenMin, amountETHMin, deadline);
 }
 
-
-// function addLiquidity(uint256 tokenAmount, uint256 ethAmount) private {
-// 	// approve token transfer to cover all possible scenarios
-// 	_approve(address(this), address(uniswapV2Router), tokenAmount);
-
-// 	// add the liquidity
-// 	uniswapV2Router.addLiquidityETH{value: ethAmount}(
-// 		address(this),
-// 		tokenAmount,
-// 		0, // slippage is unavoidable
-// 		0, // slippage is unavoidable
-// 		owner(),
-// 		block.timestamp
-// 	);
-// }
-
-
 async function getOrCreatePair(web3, privateKey, factoryContract, tokenA, tokenB) {
 	let pair = await factoryContract.methods.getPair(tokenA, tokenB).call();
-	// console.log("pair: ", pair);
+	console.log("pair: ", pair);
 	if (pair !== '0x0000000000000000000000000000000000000000') {
 		return pair;
 	}
@@ -130,9 +113,9 @@ async function getOrCreatePair(web3, privateKey, factoryContract, tokenA, tokenB
 }
 
 async function createPair(web3, privateKey, factoryContract, tokenA, tokenB) {
-	const gasPrice = getGasPrice(web3);
-	// const gasNeeded = await factoryContract.methods.createPair(tokenA, tokenB).estimateGas({gasPrice: gasPrice});
-	const gasNeeded = 85251;		//hardcoded
+	const gasPrice = await getGasPrice(web3);
+	const gasNeeded = await factoryContract.methods.createPair(tokenA, tokenB).estimateGas({gasPrice: gasPrice});
+	// const gasNeeded = 2059662;		//hardcoded
 
 	const tx = {
 		// from: sender,
@@ -155,7 +138,7 @@ async function createPair(web3, privateKey, factoryContract, tokenA, tokenB) {
 
 async function transfer(web3, privateKey, tokenContract, to, value) {
 	console.log("transfer() 1");
-	const gasPrice = getGasPrice(web3);
+	const gasPrice = await getGasPrice(web3);
 
 	console.log("transfer() to:    ", to);
 	console.log("transfer() value: ", value);
@@ -197,12 +180,19 @@ async function transfer(web3, privateKey, tokenContract, to, value) {
 async function createSLP(web3, privateKey, factoryAddr, tokenA, tokenB, amount) {
 	const factoryContract = new web3.eth.Contract(FACTORY_ABI, factoryAddr);
 
+	let pairCodeHash = await factoryContract.methods.pairCodeHash().call();
+	console.log("pairCodeHash: ", pairCodeHash);
+
 	const pairAddr = await getOrCreatePair(web3, privateKey, factoryContract, tokenA, tokenB);
 	console.log("pairAddr:                    ", pairAddr);
 	// console.log("IPair:                    ", IPair);
 
 	const pairContract = new web3.eth.Contract(IPair.abi, pairAddr);
 	// console.log("pairContract:                    ", await pairContract.symbol());
+
+	let reserves = await pairContract.methods.getReserves().call();
+	console.log("reserves: ", reserves);
+
 
 	const tokenAContract = new _web3.eth.Contract(ERC20_ABI, tokenA);
 	const tokenASymbol = await tokenAContract.methods.symbol().call();
@@ -214,7 +204,7 @@ async function createSLP(web3, privateKey, factoryAddr, tokenA, tokenB, amount) 
 	console.log("tokenBSymbol:                    ", tokenBSymbol);
 	console.log('tokenBContract.options.address:  ', tokenBContract.options.address);
 
-	await transfer(web3, privateKey, tokenAContract, pairContract.options.address, amount);
+	// await transfer(web3, privateKey, tokenAContract, pairContract.options.address, amount);
 
 // 	await tokenA.transfer(thisObject[name].address, amount)
 // 	await tokenB.transfer(thisObject[name].address, amount)
@@ -231,14 +221,13 @@ _web3.eth.net.getId().then(async function(netId) {
 
 	const tokenA = '0x3743eC0673453E5009310C727Ba4eaF7b3a1cc04';
 	// const tokenB = '0x77CB87b57F54667978Eb1B199b28a0db8C8E1c0B';			// EBEN (mainnet)
-	const tokenB = '0x19a2685c097cB28F50c0E322D23Be415d066aCC6';			// TTK
+	// const tokenB = '0x19a2685c097cB28F50c0E322D23Be415d066aCC6';			// TTK
+	const tokenB = '0x4d927B6bb73C009d870871420E9E51a8b8355Ee2';			//TTT
 
 	const amountTokenDesired = '813666000000000000';
 	const amountTokenMin = '813666000000000000';
 	const amountETHMin = '1000000000000000';
-	// const deadline = '0x61898e7e';
 	const deadline = getDeadline();
-	// const amount = 10;
 	const amount = 1000000000000000;
 
 	console.log("factoryAddr:                    ", factoryAddr);
