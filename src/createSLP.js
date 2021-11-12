@@ -137,13 +137,18 @@ async function createPair(web3, privateKey, factoryContract, tokenA, tokenB) {
 }
 
 async function transfer(web3, privateKey, tokenContract, to, value) {
+
+	const accountObj = await _web3.eth.accounts.privateKeyToAccount(privateKey);
+	const _from = accountObj.address;
+
 	console.log("transfer() 1");
 	const gasPrice = await getGasPrice(web3);
 
+	console.log("transfer() _from: ", _from);
 	console.log("transfer() to:    ", to);
 	console.log("transfer() value: ", value);
 
-	// const gasNeeded = await tokenContract.methods.transfer(to, value).estimateGas({gasPrice: gasPrice});
+	// const gasNeeded = await tokenContract.methods.transfer(to, value).estimateGas({from: _from, gasPrice: gasPrice});
 	const gasNeeded = 585251;		//hardcoded
 
 	console.log("transfer() 2");
@@ -204,7 +209,7 @@ async function createSLP(web3, privateKey, factoryAddr, tokenA, tokenB, amount) 
 	console.log("tokenBSymbol:                    ", tokenBSymbol);
 	console.log('tokenBContract.options.address:  ', tokenBContract.options.address);
 
-	// await transfer(web3, privateKey, tokenAContract, pairContract.options.address, amount);
+	await transfer(web3, privateKey, tokenAContract, pairContract.options.address, amount);
 
 // 	await tokenA.transfer(thisObject[name].address, amount)
 // 	await tokenB.transfer(thisObject[name].address, amount)
@@ -219,16 +224,17 @@ _web3.eth.net.getId().then(async function(netId) {
 	const routerAddr = process.env.ROUTER_ADDRESS;
 	const factoryAddr = process.env.FACTORY_ADDRESS;
 
-	const tokenA = '0x3743eC0673453E5009310C727Ba4eaF7b3a1cc04';
+	const tokenA = '0x3743eC0673453E5009310C727Ba4eaF7b3a1cc04';			// WBCH
 	// const tokenB = '0x77CB87b57F54667978Eb1B199b28a0db8C8E1c0B';			// EBEN (mainnet)
 	// const tokenB = '0x19a2685c097cB28F50c0E322D23Be415d066aCC6';			// TTK
-	const tokenB = '0x4d927B6bb73C009d870871420E9E51a8b8355Ee2';			//TTT
+	const tokenB = '0x4d927B6bb73C009d870871420E9E51a8b8355Ee2';			// TTT
+	// const tokenB = '0x317e2dbd67cA406548C47368eb21fB30870f6B4D';			//TTT2
 
 	const amountTokenDesired = '813666000000000000';
 	const amountTokenMin = '813666000000000000';
 	const amountETHMin = '1000000000000000';
 	const deadline = getDeadline();
-	const amount = 1000000000000000;
+	const amount = '1000000000000000';
 
 	console.log("factoryAddr:                    ", factoryAddr);
 	console.log('routerAddr:                     ', routerAddr);
@@ -244,7 +250,9 @@ _web3.eth.net.getId().then(async function(netId) {
 	// 	                            amountTokenDesired, amountTokenMin, amountETHMin, deadline);
 
 
-	await createSLP(_web3, privateKey, factoryAddr, tokenA, tokenB, amount);
+	// await createSLP(_web3, privateKey, factoryAddr, tokenA, tokenB, amount);
+	await createSLP(_web3, privateKey, factoryAddr, tokenA, tokenB, amountTokenDesired);
+	
 
 });
 
